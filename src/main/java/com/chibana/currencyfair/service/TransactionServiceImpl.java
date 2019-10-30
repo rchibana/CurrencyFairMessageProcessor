@@ -4,6 +4,7 @@ import com.chibana.currencyfair.model.Transaction;
 import com.chibana.currencyfair.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.List;
@@ -24,27 +25,32 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction createTransaction(Transaction transaction) {
-        return null;
+    @Transactional
+    public Transaction createTransaction(final Transaction transaction) {
+        return transactionRepository.save(transaction);
     }
 
     @Override
-    public Transaction getTransactionById(Long transactionId) {
-        return null;
+    @Transactional(readOnly = true)
+    public Transaction getTransactionById(final Long transactionId) {
+        return transactionRepository.getOne(transactionId);
     }
 
     @Override
-    public List<Transaction> getAllTransactionsByUserId(Long userId) {
-        return null;
+    @Transactional(readOnly = true)
+    public List<Transaction> getAllTransactionsByUserId(final Long userId) {
+        return transactionRepository.findAllByUserId(userId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Transaction> getAllTransactions() {
-        return null;
+        return transactionRepository.findAll();
     }
 
     @Override
-    public List<Transaction> getTransactionsByDateRange(Calendar initialDate, Calendar endDate) {
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionsByDateRange(final Calendar initialDate, final Calendar endDate) {
         return null;
     }
 }
