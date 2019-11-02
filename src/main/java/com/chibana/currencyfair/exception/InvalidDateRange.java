@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Date: 02/11/2019
  **/
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class InvalidDateRange extends Exception {
+public class InvalidDateRange extends GenericApiException {
 
     private static final String MESSAGE = "Invalid date ranges";
+    private static final HttpStatus HTTP_STATUS = HttpStatus.NO_CONTENT;
 
     public InvalidDateRange() {
-        super(MESSAGE);
+        super(MESSAGE, HTTP_STATUS);
     }
 }
