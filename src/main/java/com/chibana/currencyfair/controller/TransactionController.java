@@ -5,12 +5,9 @@ import com.chibana.currencyfair.dto.TransactionResponseDTO;
 import com.chibana.currencyfair.mapper.TransactionMapper;
 import com.chibana.currencyfair.model.Transaction;
 import com.chibana.currencyfair.service.TransactionService;
-import io.swagger.models.Response;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,15 +49,17 @@ public class TransactionController {
 
         transaction = this.transactionService.createTransaction(transaction);
 
-        final TransactionResponseDTO transactionResponseDTO = this.transactionMapper.transactionToResponseDTO(transaction);
-
-        return transactionResponseDTO;
+        return this.transactionMapper.transactionToResponseDTO(transaction);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<TransactionResponseDTO> getAllUserTransactions(@Valid @Positive @NotNull @RequestParam("userId") Long userId){
-        List<Transaction> listTransactionsByUserId = this.transactionService.getAllTransactionsByUserId(userId);
+    public List<TransactionResponseDTO> getAllUserTransactions(
+            @Positive(message = "{userId.positive}")
+            @NotNull(message = "{userId.notNull}")
+            @RequestParam("userId") Long userId){
+
+        final List<Transaction> listTransactionsByUserId = this.transactionService.getAllTransactionsByUserId(userId);
 
         return this.transactionMapper.transactionsToResponseDTOs(listTransactionsByUserId);
 
