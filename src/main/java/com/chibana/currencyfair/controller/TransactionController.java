@@ -32,6 +32,7 @@ import java.util.List;
 @Log4j2
 @RestController
 @RequestMapping("/transaction")
+@Validated
 public class TransactionController {
 
     private final TransactionService transactionService;
@@ -58,7 +59,7 @@ public class TransactionController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<TransactionResponseDTO> getAllUserTransactions(@Positive @NotNull @RequestParam("userId") Long userId){
+    public List<TransactionResponseDTO> getAllUserTransactions(@Valid @Positive @NotNull @RequestParam("userId") Long userId){
         List<Transaction> listTransactionsByUserId = this.transactionService.getAllTransactionsByUserId(userId);
 
         return this.transactionMapper.transactionsToResponseDTOs(listTransactionsByUserId);
