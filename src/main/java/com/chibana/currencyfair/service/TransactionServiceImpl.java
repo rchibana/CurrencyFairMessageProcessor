@@ -1,5 +1,7 @@
 package com.chibana.currencyfair.service;
 
+import com.chibana.currencyfair.exception.InvalidDateRange;
+import com.chibana.currencyfair.exception.NullTransactionException;
 import com.chibana.currencyfair.model.Transaction;
 import com.chibana.currencyfair.repository.TransactionRepository;
 import lombok.extern.log4j.Log4j2;
@@ -7,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Rodrigo Chibana
@@ -28,16 +31,21 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public Transaction createTransaction(final Transaction transaction) {
+    public Transaction createTransaction(final Transaction transaction) throws NullTransactionException {
         log.info("transaction={}", transaction);
+
+        if(transaction == null) {
+            throw new NullTransactionException();
+        }
+
         return transactionRepository.save(transaction);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Transaction getTransactionById(final Long transactionId) {
+    public Optional<Transaction> getTransactionById(final Long transactionId) {
         log.info("transactionId={}", transactionId);
-        return transactionRepository.getOne(transactionId);
+        return transactionRepository.findById(transactionId);
     }
 
     @Override
@@ -56,8 +64,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Transaction> getTransactionsByDateRange(final Calendar initDate, final Calendar endDate) {
-        log.info("initDate={}, endDate={}");
-        return null;
+    public List<Transaction> getTransactionsByDateRange(final Date initDate, final Date endDate) throws InvalidDateRange {
+        log.info("initDate={}, endDate={}", initDate, endDate);
+
+        if(initDate.after(endDate)) {
+            throw new InvalidDateRange();
+        }
+
+        return this.transactionRepository.findAllByTimePlacedBetween(initDate, endDate);
+
     }
 }

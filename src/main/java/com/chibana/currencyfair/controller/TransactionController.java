@@ -2,6 +2,7 @@ package com.chibana.currencyfair.controller;
 
 import com.chibana.currencyfair.dto.TransactionRequestDTO;
 import com.chibana.currencyfair.dto.TransactionResponseDTO;
+import com.chibana.currencyfair.exception.NullTransactionException;
 import com.chibana.currencyfair.mapper.TransactionMapper;
 import com.chibana.currencyfair.model.Transaction;
 import com.chibana.currencyfair.service.TransactionService;
@@ -43,7 +44,7 @@ public class TransactionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionResponseDTO receiveNewTransaction(@Valid @RequestBody TransactionRequestDTO transactionRequestDTO) {
+    public TransactionResponseDTO receiveNewTransaction(@Valid @RequestBody TransactionRequestDTO transactionRequestDTO) throws NullTransactionException {
 
         Transaction transaction = transactionMapper.requestDTOToTransaction(transactionRequestDTO);
 
