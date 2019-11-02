@@ -39,17 +39,6 @@ class TransactionServiceImplTest {
     }
 
     @Test
-    void createTransactionUserIdNegative() {
-        this.transaction.setUserId(-1L);
-        transactionServiceImpl.createTransaction(this.transaction);
-    }
-
-    @Test
-    void createTransactionUserIdNull() {
-        transactionServiceImpl.createTransaction(this.transaction);
-    }
-
-    @Test
     void getTransactionById() {
     }
 
