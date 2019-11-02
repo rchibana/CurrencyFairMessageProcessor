@@ -1,9 +1,11 @@
 package com.chibana.currencyfair.mapper;
 
 import com.chibana.currencyfair.dto.TransactionRequestDTO;
+import com.chibana.currencyfair.dto.TransactionResponseDTO;
 import com.chibana.currencyfair.model.Transaction;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 /**
  * Created by Rodrigo Chibana
@@ -13,8 +15,10 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface TransactionMapper {
 
-    TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
+    TransactionResponseDTO transactionToResponseDTO(Transaction transaction);
 
-    TransactionRequestDTO transactionToTransactionRequestDTO(Transaction transaction);
+    List<TransactionResponseDTO> transactionsToResponseDTOs(List<Transaction> transactions);
+
+    Transaction requestDTOToTransaction(TransactionRequestDTO transactionRequestDTO);
 
 }
