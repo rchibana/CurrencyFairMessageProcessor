@@ -38,8 +38,7 @@ public class TransactionController {
     private final TransactionMapper transactionMapper;
 
     @Autowired
-    public TransactionController(final TransactionService transactionService,
-                                 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") final TransactionMapper transactionMapper) {
+    public TransactionController(final TransactionService transactionService, final TransactionMapper transactionMapper) {
         this.transactionService = transactionService;
         this.transactionMapper = transactionMapper;
     }

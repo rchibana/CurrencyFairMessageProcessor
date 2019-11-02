@@ -12,7 +12,7 @@ import java.util.List;
  * Date: 02/11/2019
  **/
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TransactionMapper {
 
     TransactionResponseDTO transactionToResponseDTO(Transaction transaction);
