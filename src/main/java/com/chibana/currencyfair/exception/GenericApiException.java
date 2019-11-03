@@ -1,6 +1,7 @@
 package com.chibana.currencyfair.exception;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
  * Date: 02/11/2019
  **/
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class GenericApiException extends Exception {
 
     private String errorMessage;

@@ -1,7 +1,9 @@
 package com.chibana.currencyfair.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,9 +16,11 @@ import java.util.Date;
  * Date: 30/10/2019
  **/
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionRequestDTO {
 
-    @Positive(message = "{userId.positve}")
+    @Positive(message = "{userId.positive}")
     @NotNull(message = "{userId.notNull}")
     private Long userId;
 
