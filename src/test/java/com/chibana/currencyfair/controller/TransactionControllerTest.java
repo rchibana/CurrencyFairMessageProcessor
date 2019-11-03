@@ -4,6 +4,7 @@ import com.chibana.currencyfair.dto.TransactionRequestDTO;
 import com.chibana.currencyfair.dto.TransactionResponseDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ class TransactionControllerTest {
     private static final String URL = "/transaction";
 
     @Test
-    void receiveNewTransaction() throws Exception {
+    void receiveNewTransactionSuccessfully() throws Exception {
 
         final String requestJson = objectMapper.writeValueAsString(getTransactionRequestDTO());
 
@@ -56,6 +57,25 @@ class TransactionControllerTest {
         final TransactionResponseDTO responseDTO = objectMapper.readValue(jsonContent, TransactionResponseDTO.class);
 
         Assertions.assertThat(responseDTO.getId()).isNotNull();
+    }
+
+    @Test
+    void receiveNewTransactionNullFields() throws Exception {
+
+        final String requestJson = objectMapper.writeValueAsString(new TransactionRequestDTO());
+        performPost(requestJson, status().isBadRequest());
+
+    }
+
+    @Test
+    void receiveNewTransactionInvalidUserId() throws Exception {
+
+        final TransactionRequestDTO transactionRequestDTO = getTransactionRequestDTO();
+        transactionRequestDTO.setUserId(-1234L);
+
+        final String requestJson = objectMapper.writeValueAsString(new TransactionRequestDTO());
+        performPost(requestJson, status().isBadRequest());
+
     }
 
     @Test
@@ -94,11 +114,43 @@ class TransactionControllerTest {
         Assertions.assertThat(transactionResponseDTOList.size()).isEqualTo(0);
     }
 
-    private MvcResult performGet(MultiValueMap<String, String> params, ResultMatcher resultMatcher) throws Exception {
-        return mockMvc.perform(get(URL).params(params))
+    @Test
+    public void getTransactionsBetweenDates() throws Exception {
+
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>(){{
+            add("initDate", "25/01/2016");
+            add("endDate", "29/01/2016");
+        }};
+
+        final String contentAsString = getContentAsString(performGet("/dates", params, status().isOk()));
+
+        final List<TransactionResponseDTO> transactionResponseDTOs = objectMapper.readValue(contentAsString, new TypeReference<List<TransactionResponseDTO>>() {});
+
+        Assertions.assertThat(transactionResponseDTOs.size()).isEqualTo(4);
+
+    }
+
+    @Test
+    public void getTransactionsBetweenDatesNull() throws Exception {
+
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>(){{
+            add("initDate", null);
+            add("endDate", null);
+        }};
+
+        performGet("/dates", params, status().isBadRequest());
+
+    }
+
+    private MvcResult performGet(String path, MultiValueMap<String, String> params, ResultMatcher resultMatcher) throws Exception {
+        return mockMvc.perform(get(URL + path).params(params))
                 .andDo(print())
                 .andExpect(resultMatcher)
                 .andReturn();
+    }
+
+    private MvcResult performGet(MultiValueMap<String, String> params, ResultMatcher resultMatcher) throws Exception {
+        return performGet(StringUtils.EMPTY, params, resultMatcher);
     }
 
     private MvcResult performPost(String requestJson, ResultMatcher resultMatcher) throws Exception {
