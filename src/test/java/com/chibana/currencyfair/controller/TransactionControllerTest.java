@@ -11,10 +11,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,20 +49,11 @@ class TransactionControllerTest {
     @Test
     void receiveNewTransaction() throws Exception {
 
-        Date date = Calendar.getInstance().getTime();
+        final String requestJson = objectMapper.writeValueAsString(getTransactionRequestDTO());
 
-        TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(134256L, "EUR", "GBP", new BigDecimal("1000"), new BigDecimal("747.10"), 0.7471, date, "FR");
+        final String jsonContent = getContentAsString(performPost(requestJson, status().isCreated()));
 
-        String requestJson = objectMapper.writeValueAsString(transactionRequestDTO);
-
-        MvcResult mvcResult = mockMvc.perform(post(URL).content(requestJson).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        String content = mvcResult.getResponse().getContentAsString();
-
-        final TransactionResponseDTO responseDTO = objectMapper.readValue(content, TransactionResponseDTO.class);
+        final TransactionResponseDTO responseDTO = objectMapper.readValue(jsonContent, TransactionResponseDTO.class);
 
         Assertions.assertThat(responseDTO.getId()).isNotNull();
     }
@@ -74,32 +68,72 @@ class TransactionControllerTest {
 
     @Test
     void getAllUserTransactions() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get(URL).param(USER_ID, "1"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
 
-        String content = mvcResult.getResponse().getContentAsString();
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>(){{
+            add(USER_ID, "1");
+        }};
 
-        final List<TransactionResponseDTO> transactionResponseDTOList = objectMapper.readValue(content, new TypeReference<List<TransactionResponseDTO>>(){});
+        final String jsonContent = getContentAsString(performGet(params, status().isOk()));
+
+        final List<TransactionResponseDTO> transactionResponseDTOList = objectMapper.readValue(jsonContent, new TypeReference<List<TransactionResponseDTO>>(){});
 
         Assertions.assertThat(transactionResponseDTOList.size()).isGreaterThan(0);
     }
 
     @Test
     void getAllUserTransactionsWithoutTransactions() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get(URL).param(USER_ID, "2"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
 
-        String content = mvcResult.getResponse().getContentAsString();
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>(){{
+            add(USER_ID, "9999999");
+        }};
 
-        final List<TransactionResponseDTO> transactionResponseDTOList = objectMapper.readValue(content, new TypeReference<List<TransactionResponseDTO>>(){});
+        final String jsonContent = getContentAsString(performGet(params, status().isOk()));
+
+        final List<TransactionResponseDTO> transactionResponseDTOList = objectMapper.readValue(jsonContent, new TypeReference<List<TransactionResponseDTO>>(){});
 
         Assertions.assertThat(transactionResponseDTOList.size()).isEqualTo(0);
     }
 
+    private MvcResult performGet(MultiValueMap<String, String> params, ResultMatcher resultMatcher) throws Exception {
+        return mockMvc.perform(get(URL).params(params))
+                .andDo(print())
+                .andExpect(resultMatcher)
+                .andReturn();
+    }
 
+    private MvcResult performPost(String requestJson, ResultMatcher resultMatcher) throws Exception {
+        return mockMvc.perform(post(URL)
+                    .content(requestJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(resultMatcher)
+                .andReturn();
+    }
+
+    /**
+     * Returns response object in String format
+     * @return String
+     */
+    private String getContentAsString(MvcResult mvcResult) throws UnsupportedEncodingException {
+        return mvcResult.getResponse().getContentAsString();
+    }
+
+    /**
+     * Builds an TransactionRequestDTO object
+     * @return {@link TransactionRequestDTO}
+     */
+    private TransactionRequestDTO getTransactionRequestDTO() {
+        return TransactionRequestDTO.builder()
+                .userId(134256L)
+                .currencyFrom("EUR")
+                .currencyTo("GBP")
+                .amountBuy(new BigDecimal("1000"))
+                .amountSell(new BigDecimal("747.10"))
+                .rate(0.7471)
+                .timePlaced(Calendar.getInstance().getTime())
+                .originatingCountry("FR")
+                .build();
+    }
 
 }
