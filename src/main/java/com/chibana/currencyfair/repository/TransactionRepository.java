@@ -1,6 +1,5 @@
 package com.chibana.currencyfair.repository;
 
-import com.chibana.currencyfair.dto.TransactionResponseDTO;
 import com.chibana.currencyfair.model.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

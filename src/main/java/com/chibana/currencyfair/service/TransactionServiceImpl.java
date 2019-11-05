@@ -1,6 +1,5 @@
 package com.chibana.currencyfair.service;
 
-import com.chibana.currencyfair.dto.TransactionResponseDTO;
 import com.chibana.currencyfair.exception.InvalidDateRange;
 import com.chibana.currencyfair.exception.NullTransactionException;
 import com.chibana.currencyfair.model.Transaction;

@@ -14,19 +14,15 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 public class GenericApiException extends Exception {
 
-    private String errorMessage;
-    private HttpStatus httpStatus;
-    private LocalDateTime timestamp;
+    private final String errorMessage;
+    private final HttpStatus httpStatus;
+    private final LocalDateTime timestamp;
 
-    public GenericApiException(String errorMessage) {
+    public GenericApiException(String errorMessage, HttpStatus httpStatus) {
         super(errorMessage);
         this.errorMessage = errorMessage;
-        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.httpStatus = httpStatus;
         this.timestamp = LocalDateTime.now();
     }
 
-    public GenericApiException(String errorMessage, HttpStatus httpStatus) {
-        this(errorMessage);
-        this.httpStatus = httpStatus;
-    }
 }
