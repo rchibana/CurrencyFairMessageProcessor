@@ -42,7 +42,7 @@ public class TransactionRequestDTO {
     private Double rate;
 
     @NotNull(message = "{timePlaced.notNull}")
-    @JsonFormat(pattern="dd-MMM-yyyy HH:mm:ss")
+    @JsonFormat(pattern="dd-MMM-yy HH:mm:ss")
     private Date timePlaced;
 
     @NotBlank(message = "{originatingCountry.notBlank}")

@@ -10,11 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.data.domain.PageRequest;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -84,14 +82,9 @@ class TransactionServiceImplTest {
         final Date endDate = calendar.getTime();
 
         Assertions.assertThrows(InvalidDateRange.class, () -> {
-           this.transactionService.getTransactionsByDateRange(initDate, endDate);
+           this.transactionService.getTransactionsByDateRange(initDate, endDate, PageRequest.of(0, 10));
         });
 
     }
 
-    private Transaction getTransaction() {
-        final Date date = calendar.getTime();
-
-        return new Transaction(134256L,"EUR", "GBP", new BigDecimal("1000"), new BigDecimal("747.10"), 0.7471, date , "FR");
-    }
 }

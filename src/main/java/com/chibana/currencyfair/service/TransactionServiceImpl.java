@@ -1,11 +1,14 @@
 package com.chibana.currencyfair.service;
 
+import com.chibana.currencyfair.dto.TransactionResponseDTO;
 import com.chibana.currencyfair.exception.InvalidDateRange;
 import com.chibana.currencyfair.exception.NullTransactionException;
 import com.chibana.currencyfair.model.Transaction;
 import com.chibana.currencyfair.repository.TransactionRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,21 +60,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Transaction> getAllTransactions() {
-        log.info("getting all transactions");
-        return transactionRepository.findAll();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Transaction> getTransactionsByDateRange(final Date initDate, final Date endDate) throws InvalidDateRange {
+    public Page<Transaction> getTransactionsByDateRange(final Date initDate, final Date endDate, Pageable pageable) throws InvalidDateRange {
         log.info("initDate={}, endDate={}", initDate, endDate);
 
         if(initDate.after(endDate)) {
             throw new InvalidDateRange();
         }
 
-        return this.transactionRepository.findAllByTimePlacedBetween(initDate, endDate);
+        return this.transactionRepository.findAllByTimePlacedBetween(initDate, endDate, pageable);
 
     }
 }

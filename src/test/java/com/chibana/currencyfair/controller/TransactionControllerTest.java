@@ -2,6 +2,7 @@ package com.chibana.currencyfair.controller;
 
 import com.chibana.currencyfair.dto.TransactionRequestDTO;
 import com.chibana.currencyfair.dto.TransactionResponseDTO;
+import com.chibana.currencyfair.page.TransactionPage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,7 +23,6 @@ import org.springframework.util.MultiValueMap;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -120,13 +121,29 @@ class TransactionControllerTest {
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>(){{
             add("initDate", "25/01/2016");
             add("endDate", "29/01/2016");
+            add("pageNumber", "0");
+            add("pageSize", "2");
         }};
 
-        final String contentAsString = getContentAsString(performGet("/dates", params, status().isOk()));
+        final String contentAsString = getContentAsString(performGet("/date", params, status().isOk()));
 
-        final List<TransactionResponseDTO> transactionResponseDTOs = objectMapper.readValue(contentAsString, new TypeReference<List<TransactionResponseDTO>>() {});
+        final Page<TransactionResponseDTO> transactionResponseDTOs = objectMapper.readValue(contentAsString, new TypeReference<TransactionPage<TransactionResponseDTO>>() {});
 
-        Assertions.assertThat(transactionResponseDTOs.size()).isEqualTo(4);
+        Assertions.assertThat(transactionResponseDTOs.getTotalElements()).isEqualTo(4);
+
+    }
+
+    @Test
+    public void getTransactionsBetweenDatesInvalidDateFormat() throws Exception {
+
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>(){{
+            add("initDate", "2016-12-01");
+            add("endDate", "2016-12-01");
+            add("pageNumber", "0");
+            add("pageSize", "2");
+        }};
+
+        performGet("/date", params, status().isBadRequest());
 
     }
 
@@ -136,9 +153,11 @@ class TransactionControllerTest {
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>(){{
             add("initDate", null);
             add("endDate", null);
+            add("pageNumber", "0");
+            add("pageSize", "2");
         }};
 
-        performGet("/dates", params, status().isBadRequest());
+        performGet("/date", params, status().isBadRequest());
 
     }
 
