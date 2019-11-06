@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -58,7 +59,14 @@ public class TransactionReporterController {
             throws InvalidDateRange, ParseException {
 
         final Date initDate = simpleDateFormat.parse(initDateString);
-        final Date endDate = simpleDateFormat.parse(endDateString);
+
+        // It's necessary to set time to the last moment possible of the day
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(simpleDateFormat.parse(endDateString));
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        final Date endDate = calendar.getTime();
 
         final Pageable pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("id"));
         final Page<Transaction> transactionsByDateRange = this.transactionService.getTransactionsByDateRange(initDate, endDate, pageRequest);
