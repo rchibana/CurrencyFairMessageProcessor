@@ -40,13 +40,6 @@ The idea to run the tests in this project was thought to be easy to maintain and
 $ ./gradlew clean build test
 ```
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## Built With
 
