@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  h2:
+    console:
+      enabled: false
   profiles:
     active: dev
 
