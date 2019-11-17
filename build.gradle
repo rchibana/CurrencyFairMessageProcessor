@@ -4,6 +4,7 @@ plugins {
     id 'org.asciidoctor.convert' version '1.5.8'
     id 'java'
     id 'net.ltgt.apt' version '0.20'
+    id "org.flywaydb.flyway" version "6.0.8"
 }
 
 apply plugin: 'net.ltgt.apt-idea'
@@ -75,4 +76,11 @@ test {
 asciidoctor {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+flyway {
+    url = 'jdbc:mysql://localhost:3306?serverTimezone=GMT'
+    user = 'root'
+    password = 'root'
+    schemas = ['currency_fair']
 }
