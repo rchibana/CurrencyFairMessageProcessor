@@ -63,6 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("initDate={}, endDate={}", initDate, endDate);
 
         if(initDate.after(endDate)) {
+            log.warn("End date must be bigger than init date. initDate={}, endDate={}", initDate, endDate);
             throw new InvalidDateRange();
         }
 

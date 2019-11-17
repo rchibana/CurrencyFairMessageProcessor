@@ -58,20 +58,31 @@ public class TransactionReporterController {
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize)
             throws InvalidDateRange, ParseException {
 
+        log.info("initDateReceived={}, endDateReceived={}", initDateString, endDateString);
+
         final Date initDate = simpleDateFormat.parse(initDateString);
 
-        // It's necessary to set time to the last moment possible of the day
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(simpleDateFormat.parse(endDateString));
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        final Date endDate = calendar.getTime();
+        final Date endDate = getLastHourOfTheDay(endDateString);
 
         final Pageable pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("id"));
         final Page<Transaction> transactionsByDateRange = this.transactionService.getTransactionsByDateRange(initDate, endDate, pageRequest);
         return transactionsByDateRange.map(transactionMapper::transactionToResponseDTO);
 
+    }
+
+    /**
+     * Returns the date with hours, minutes and seconds.
+     * @param date {@link String} that represents a date with dd/MM/yyyy format
+     * @return {@link Date}
+     * @throws ParseException this exception will be throw if the date format is incorrect
+     */
+    private Date getLastHourOfTheDay(String date) throws ParseException {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(simpleDateFormat.parse(date));
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        return calendar.getTime();
     }
 
 
