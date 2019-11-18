@@ -20,7 +20,20 @@ so, that's the reason that I added flyway. It will provide the possibility of cr
 to convert an entity to a DTO, I added the MapStruct plugin that will help with it.
 
 6 - The Spring Sleuth was added to help and track the customer actions. Sometimes it's really difficult to understand all the request 
-that a microservice is receiving, and even though we could look all the calls, we'd spend so much time to find the requests and match them 
+that a microservice is receiving, and even though we could look all the calls, we'd spend so much time to find the requests and match them
+
+7 - The idea of mysql in this project, is basically because based on the quantity of fields and transactions that I imagine that will be arrive,
+if necessary to add more fields a new table could be create. Moreover, even knowing that NoSql databases are faster than Relational databases (reading process),
+I still believe that it's the best option once that I'll have a reliable database structure instead of documents that can be changed, and if a necessity of changing the database to another one like Oracle or SqlServer, would be easier than migrate a mongoDb database to Cassandra for example (almost impossible).
+Of course that it took a long time to be thought and planned, once that as I told before, a NoSql database would be faster to be read.
+
+### Some improvements to the future
+
+1 - Add some monitoring like new relic would be interesting
+
+2 - It's missing some performance tests
+
+3 - Audit tables could be added using hibernate envers
 
 ## Getting Started
 
