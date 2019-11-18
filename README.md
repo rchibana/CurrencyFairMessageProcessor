@@ -4,7 +4,7 @@ Project responsible for process and store new transactions messages.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
@@ -52,6 +52,10 @@ $ ./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
 After the execution of the command above, you'll be able to see the swagger interface with some information of endpoints and examples as well.
+
+```
+http://localhost:8080/swagger-ui.html
+```
 
 ## Running the tests
 
