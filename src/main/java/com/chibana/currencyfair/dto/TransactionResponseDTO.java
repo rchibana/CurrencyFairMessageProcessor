@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -29,9 +30,11 @@ public class TransactionResponseDTO {
     private Long userId;
 
     @NotBlank(message = "{currency.notBlank}")
+    @Length(min = 3, max = 3, message = "{currency.invalid}")
     private String currencyFrom;
 
     @NotBlank(message = "{currency.notBlank}")
+    @Length(min = 3, max = 3, message = "{currency.invalid}")
     private String currencyTo;
 
     @Positive(message = "{amount.positive}")
@@ -48,6 +51,7 @@ public class TransactionResponseDTO {
     private Date timePlaced;
 
     @NotBlank(message = "{originatingCountry.notBlank}")
+    @Length(min = 2, max = 2, message = "{originatingCountry.invalid}")
     private String originatingCountry;
 
 

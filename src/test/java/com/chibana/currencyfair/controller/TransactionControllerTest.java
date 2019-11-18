@@ -68,7 +68,40 @@ class TransactionControllerTest {
         final TransactionRequestDTO transactionRequestDTO = testHelper.getTransactionRequestDTO();
         transactionRequestDTO.setUserId(-1234L);
 
-        final String requestJson = objectMapper.writeValueAsString(new TransactionRequestDTO());
+        final String requestJson = objectMapper.writeValueAsString(transactionRequestDTO);
+        testHelper.performPost(requestJson, status().isBadRequest());
+
+    }
+
+    @Test
+    void receiveNewTransactionInvalidCurrencyFromLength() throws Exception {
+
+        final TransactionRequestDTO transactionRequestDTO = testHelper.getTransactionRequestDTO();
+        transactionRequestDTO.setCurrencyFrom("AAAA");
+
+        final String requestJson = objectMapper.writeValueAsString(transactionRequestDTO);
+        testHelper.performPost(requestJson, status().isBadRequest());
+
+    }
+
+    @Test
+    void receiveNewTransactionInvalidCurrencyToLength() throws Exception {
+
+        final TransactionRequestDTO transactionRequestDTO = testHelper.getTransactionRequestDTO();
+        transactionRequestDTO.setCurrencyTo("AAAA");
+
+        final String requestJson = objectMapper.writeValueAsString(transactionRequestDTO);
+        testHelper.performPost(requestJson, status().isBadRequest());
+
+    }
+
+    @Test
+    void receiveNewTransactionInvalidOriginatingCountryToLength() throws Exception {
+
+        final TransactionRequestDTO transactionRequestDTO = testHelper.getTransactionRequestDTO();
+        transactionRequestDTO.setOriginatingCountry("AAA");
+
+        final String requestJson = objectMapper.writeValueAsString(transactionRequestDTO);
         testHelper.performPost(requestJson, status().isBadRequest());
 
     }

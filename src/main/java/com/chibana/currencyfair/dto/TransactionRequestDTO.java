@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -27,9 +28,11 @@ public class TransactionRequestDTO {
     private Long userId;
 
     @NotBlank(message = "{currency.notBlank}")
+    @Length(min = 3, max = 3, message = "{currency.invalid}")
     private String currencyFrom;
 
     @NotBlank(message = "{currency.notBlank}")
+    @Length(min = 3, max = 3, message = "{currency.invalid}")
     private String currencyTo;
 
     @Positive(message = "{amount.positive}")
@@ -46,6 +49,7 @@ public class TransactionRequestDTO {
     private Date timePlaced;
 
     @NotBlank(message = "{originatingCountry.notBlank}")
+    @Length(min = 2, max = 2, message = "{originatingCountry.invalid}")
     private String originatingCountry;
 
 
